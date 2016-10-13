@@ -3,6 +3,16 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: [
+          'public/client/**/*.js',
+          'public/lib/**/*.js'
+          ],
+        dest: 'public/dist/built.js'
+      },
     },
 
     mochaTest: {
@@ -21,15 +31,26 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      my_target: {
+        files: {
+          'public/dist/built.js': ['public/dist/built.js']
+        }
+      }
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        'public/client/**/*.js',
+        'public/lib/**/*.js'
       ]
     },
 
     cssmin: {
+      target: {
+        files: {
+          'public/dist/style-min.css': ['public/style.css']
+        }
+      }
     },
 
     watch: {
@@ -39,6 +60,7 @@ module.exports = function(grunt) {
           'public/lib/**/*.js',
         ],
         tasks: [
+          'eslint',
           'concat',
           'uglify'
         ]
@@ -51,7 +73,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
-        command: 'git push live head:master'
+        command: ['git add .', 'git commit', 'git push live head:master'].join('&&')
       }
     },
   });
@@ -78,6 +100,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'eslint', //eslint lints files to be checked
+    'concat', //concat puts them all in one file
+    'uglify', //uglifies the file (UNLINTABLE)
+    'mochaTest' //test stability of converted files
   ]);
 
   grunt.registerTask('server', [
@@ -99,6 +125,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+
   ]);
 
 
