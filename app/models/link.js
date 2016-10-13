@@ -9,15 +9,20 @@ var linkSchema = mongoose.Schema({
   title: String,
   visits: Number
 });
+var Link = mongoose.model('Link', linkSchema);
+
+var createSha = function(url) {
+  var shasum = crypto.createHash('sha1');
+  shasum.update(url);
+  return shasum.digest('hex').slice(0, 5);
+}
 
 linkSchema.pre('save', function(next) {
-  var shasum = crypto.createHash('sha1');
-  shasum.update(this.url);
-  this.code = shasum.digest('hex').slice(0, 5);
+  var code = createSha(this.url);
+  this.code = code;
   next();
 });
 
 
-var Link = mongoose.model('Link', linkSchema);
 
 module.exports = Link;
