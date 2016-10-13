@@ -95,6 +95,7 @@ module.exports = function(grunt) {
   // Main grunt tasks
   ////////////////////////////////////////////////////
 
+
   grunt.registerTask('test', [
     'mochaTest'
   ]);
@@ -102,22 +103,18 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'eslint', //eslint lints files to be checked
     'concat', //concat puts them all in one file
-    'uglify', //uglifies the file (UNLINTABLE)
-    'mochaTest' //test stability of converted files
+    'uglify' //uglifies the file (UNLINTABLE)
   ]);
 
   grunt.registerTask('server', [
     'nodemon'
   ]);
 
-  grunt.registerTask('push-live', [
-    'shell'
-  ]);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
       // add your production server task here
-      grunt.task.run([ 'push-live' ]);
+      grunt.task.run([ 'shell' ]);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
@@ -125,7 +122,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
-
+    'build',
+    'test',
+    'upload'
   ]);
 
 
